@@ -4,6 +4,9 @@ namespace denis909\yii;
 
 use Yii;
 
-class Job extends \yii\base\BaseObject implements \yii\queue\JobInterface
+abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterface
 {
+
+    abstract public function execute($queue);
+
 }
