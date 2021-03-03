@@ -9,4 +9,14 @@ abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterfa
 
     abstract public function execute($queue);
 
+    public function push($queue)
+    {
+        if (!$queue)
+        {
+            $queue = Yii::$app->queue;
+        }
+
+        $queue->push($this);
+    }
+
 }
