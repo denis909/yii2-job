@@ -7,7 +7,7 @@ use Yii;
 abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterface
 {
 
-    public $queueComponent = 'queue';
+    protected $queueComponent = 'queue';
 
     abstract public function execute($queue);
 
