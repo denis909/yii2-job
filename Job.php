@@ -7,7 +7,7 @@ use Yii;
 abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterface
 {
 
-    protected $queueComponent = 'queue';
+    protected $channel;
 
     abstract public function execute($queue);
 
@@ -15,10 +15,23 @@ abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterfa
     {
         if (!$queue)
         {
-            $queue = Yii::$app->{$this->queueComponent};
+            $queue = Yii::$app->queue;
+
+            $channel = $queue->channel; // save channel
+
+            if ($this->channel)
+            {
+                $queue->channel = $this->channel;
+            }
+
+            $return = $queue->push($this);
+
+            $queue->channel = $channel; // restore channel
+        
+            return $return;
         }
 
-        $queue->push($this);
+        return $queue->push($this);
     }
 
 }
