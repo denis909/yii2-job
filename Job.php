@@ -11,7 +11,7 @@ abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterfa
 
     abstract public function execute($queue);
 
-    public function push($queue)
+    public function push($queue = null)
     {
         if (!$queue)
         {
