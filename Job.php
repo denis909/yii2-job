@@ -3,13 +3,26 @@
 namespace denis909\yii;
 
 use Yii;
+use yii\queue\JobInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
+use Psr\Log\NullLogger;
 
-abstract class Job extends \yii\base\BaseObject implements \yii\queue\JobInterface
+abstract class Job extends \yii\base\BaseObject implements JobInterface, LoggerAwareInterface 
 {
+
+    use LoggerAwareTrait;
 
     protected $channel;
 
     abstract public function execute($queue);
+
+    public function init()
+    {
+        parent::init();
+
+        $this->setLogger(new NullLogger);
+    }
 
     public function push($queue = null)
     {
