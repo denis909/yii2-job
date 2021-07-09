@@ -18,7 +18,7 @@ abstract class Job extends \yii\base\BaseObject implements JobInterface, LoggerA
 
     protected $priority = 1024;
 
-    abstract public function execute($queue);
+    abstract public function execute(Queue $queue);
 
     public function init()
     {
