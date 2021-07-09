@@ -3,6 +3,7 @@
 namespace denis909\yii;
 
 use Yii;
+use yii\queue\Queue;
 use yii\queue\JobInterface;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
@@ -15,6 +16,8 @@ abstract class Job extends \yii\base\BaseObject implements JobInterface, LoggerA
 
     protected $channel;
 
+    protected $priority = 1024;
+
     abstract public function execute($queue);
 
     public function init()
@@ -24,27 +27,27 @@ abstract class Job extends \yii\base\BaseObject implements JobInterface, LoggerA
         $this->setLogger(new NullLogger);
     }
 
-    public function push($queue = null)
+    public function setPriority(int $priority)
     {
-        if (!$queue)
+        $this->priority = $priority;
+
+        return $this;
+    }
+
+    public function push(Queue $queue)
+    {
+        $channel = $queue->channel; // save channel
+
+        if ($this->channel)
         {
-            $queue = Yii::$app->queue;
-
-            $channel = $queue->channel; // save channel
-
-            if ($this->channel)
-            {
-                $queue->channel = $this->channel;
-            }
-
-            $return = $queue->push($this);
-
-            $queue->channel = $channel; // restore channel
-        
-            return $return;
+            $queue->channel = $this->channel;
         }
 
-        return $queue->push($this);
+        $return = $queue->priority($this->priority)->push($this);
+
+        $queue->channel = $channel; // restore channel
+    
+        return $return;
     }
 
 }
